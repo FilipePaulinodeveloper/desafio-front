@@ -16,6 +16,11 @@ const routes = [
         name: 'users', 
         component: () => import('./components/pages/user/UsersApp.vue') 
     },
+    { 
+        path: '/create-users', 
+        name: 'create-users', 
+        component: () => import('./components/pages/user/CreateUser.vue') 
+    },
   ]
 
 const router = createRouter({

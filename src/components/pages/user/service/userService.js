@@ -1,14 +1,13 @@
 import axios from 'axios';
 
 // Função para criar um novo usuário
-async function criarUsuario(dadosUsuario) {
-    try {
-        const resposta = await axios.post('/postUser', dadosUsuario);
-        console.log('Usuário criado com sucesso:', resposta.data);
+const urlBack = 'http://127.0.0.1:8000/api/'
+async function createUser(userData) {
+    try {        
+        const resposta = await axios.post(`${urlBack}user`, userData);        
         return resposta.data;
-    } catch (erro) {
-        console.error('Erro ao criar usuário:', erro);
-        throw erro;
+    } catch (erro) {        
+        return erro.response.data
     }
 }
 
@@ -62,7 +61,7 @@ async function excluirUsuario(id) {
 
 // Exportar as funções
 export {
-    criarUsuario,
+    createUser,
     obterUsuarios,
     obterUsuarioPorId,
     atualizarUsuario,

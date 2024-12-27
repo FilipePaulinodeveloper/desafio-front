@@ -12,22 +12,18 @@ async function createUser(userData) {
 }
 
 // Função para obter a lista de usuários
-async function obterUsuarios() {
-    try {
-        const resposta = await axios.get('/getUsers');
-        console.log('Usuários obtidos:', resposta.data);
+async function getUsers() {
+   
+        const resposta = await axios.get(`${urlBack}users`);        
         return resposta.data;
-    } catch (erro) {
-        console.error('Erro ao obter usuários:', erro);
-        throw erro;
-    }
+    
 }
 
 // Função para obter um usuário pelo ID
-async function obterUsuarioPorId(id) {
+async function getUserById(id) {
     try {
-        const resposta = await axios.get(`${'/getUsers'}/${id}`);
-        console.log('Usuário obtido:', resposta.data);
+        const resposta = await axios.get(`${urlBack}user/${id}`);
+        
         return resposta.data;
     } catch (erro) {
         console.error(`Erro ao obter o usuário com ID ${id}:`, erro);
@@ -36,10 +32,9 @@ async function obterUsuarioPorId(id) {
 }
 
 // Função para atualizar um usuário
-async function atualizarUsuario(id, dadosAtualizados) {
+async function updateUser(id, dadosAtualizados) {
     try {
-        const resposta = await axios.put(`${'/updateUsers'}/${id}`, dadosAtualizados);
-        console.log('Usuário atualizado com sucesso:', resposta.data);
+        const resposta = await axios.put(`${urlBack}user/${id}`, dadosAtualizados);        
         return resposta.data;
     } catch (erro) {
         console.error(`Erro ao atualizar o usuário com ID ${id}:`, erro);
@@ -62,8 +57,8 @@ async function excluirUsuario(id) {
 // Exportar as funções
 export {
     createUser,
-    obterUsuarios,
-    obterUsuarioPorId,
-    atualizarUsuario,
+    getUsers,
+    getUserById,
+    updateUser,
     excluirUsuario
 };

@@ -11,7 +11,7 @@
         {{ successMensage }}
 
     </h2>
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="handleSubmit(props.isEditing)">
       <!-- Nome -->
       <div class="mb-4">
         <label for="name" class="block text-sm font-medium text-gray-700">Nome</label>
@@ -22,12 +22,20 @@
 
       </div>
 
+      <!-- Empresa -->
+            <div class="mb-4">
+        <label for="empresa" class="block text-sm font-medium text-gray-700">Empresa</label>
+        <input type="text" id="empresa" v-model="form.empresa"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Digite o nome da Empresa" required @input="validateRequiredFields('empresa')" />
+          <p v-if="requiredError" class="text-red-500 text-sm mt-1">{{ requiredError.empresa }}</p>
+
+      </div>
+
       <!-- Email -->
       <div class="mb-4">
         <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-        <!-- <input type="email" id="email" v-model="form.email"
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Digite seu email" required /> -->
+        
 
           <input
             type="email"
@@ -45,7 +53,7 @@
       </div>
 
       <!-- Senha -->
-      <div class="mb-4">
+      <div class="mb-4" v-if="!props.isEditing">
         <label for="password" class="block text-sm font-medium text-gray-700">Senha</label>
         <input type="password" id="password" v-model="form.password"
           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
@@ -54,17 +62,40 @@
       </div>
 
       <!-- Telefones -->
-      <div class="mb-4">
+      <div class="mb-4" v-if="!props.isEditing">
         <label class="block text-sm font-medium text-gray-700">Telefones</label>
         <div v-for="(phone, index) in form.phones" :key="index" class="flex items-center space-x-2 mt-2">
-          <input type="tel" v-model="form.phones[index]" @input="applyPhoneMask(index)"
+          <input type="tel" v-model="form.phones[index]" @input="applyPhoneMask(index, props.isEditing)"
             class="flex-1 border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Digite um telefone" maxlength="16" />
           <button type="button" @click="removePhone(index)" class="text-red-500 hover:text-red-700">
             Remover
           </button>
         </div>
+        
         <button type="button" @click="addPhone" class="mt-2 text-blue-500 hover:text-blue-700">
+          + Adicionar Telefone
+        </button>
+      </div>
+      <!-- Telefones edição  -->
+      <div class="mb-4" v-else>
+        <label class="block text-sm font-medium text-gray-700">Telefones</label>
+        <div v-for="(phone, index) in form.phones" :key="index" class="flex items-center space-x-2 mt-2">          
+          
+          <input 
+            type="tel" 
+            v-model="phone.phone_number" 
+            @input="applyPhoneMask(phone, props.isEditing)"
+            class="flex-1 border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500" 
+            placeholder="Digite um telefone" 
+            maxlength="16" 
+          />
+          <button type="button" @click="removePhone(phone)" class="text-red-500 hover:text-red-700">
+            Remover
+          </button>
+        </div>
+        
+        <button type="button" @click="addPhone(props.isEditing)" class="mt-2 text-blue-500 hover:text-blue-700">
           + Adicionar Telefone
         </button>
       </div>
@@ -79,9 +110,19 @@
 
 <script setup>
 
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useUser } from './composables/useUser.js'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
+
+/* eslint-disable */
+const props = defineProps({
+  isEditing: {
+    type: Boolean, 
+    default: false 
+  }
+})
 
 const user = useUser()
 const {
@@ -89,11 +130,23 @@ const {
   removePhone,
   handleSubmit,
   applyPhoneMask,
+  getOneUser,
+  updateOneUser,
   errorMensage,
-  successMensage
+  successMensage,
+  id
 } = user
+let form = user.data
+onMounted(() => {
+  
+  if (props.isEditing) {
+    getOneUser(route.params.id)
+    id.value = route.params.id
+  }
+ 
+})
 
-const form = user.data
+
 
 const emailError = ref('');
 const validateEmail = () => {
@@ -110,6 +163,7 @@ const validateEmail = () => {
 const requiredError = ref({
     name: '',  
     password: '',
+    empresa: '',    
 });
 
 const validateRequiredFields = (field) => {

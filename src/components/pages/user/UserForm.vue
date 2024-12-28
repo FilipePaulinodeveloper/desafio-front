@@ -95,7 +95,7 @@
           </button>
         </div>
         
-        <button type="button" @click="addPhone(props.isEditing)" class="mt-2 text-blue-500 hover:text-blue-700">
+        <button type="button" @click="addPhone($event, props.isEditing)" class="mt-2 text-blue-500 hover:text-blue-700">
           + Adicionar Telefone
         </button>
       </div>
@@ -124,6 +124,8 @@ const props = defineProps({
   }
 })
 
+
+
 const user = useUser()
 const {
   addPhone,
@@ -138,7 +140,7 @@ const {
 } = user
 let form = user.data
 onMounted(() => {
-  
+    
   if (props.isEditing) {
     getOneUser(route.params.id)
     id.value = route.params.id

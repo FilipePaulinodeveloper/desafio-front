@@ -50,6 +50,22 @@
                     @click="getOneUser(user)"
                       >Editar<span class="sr-only">, {{ user.name }}</span></a
                     >
+                    <a 
+                    v-if="!confirmDelete"
+                      href="#" 
+                      class="text-red-600 hover:text-red-900 ml-4" 
+                      @click="confirmDelete = true"
+                    >
+                      Excluir<span class="sr-only">, {{ user.name }}</span>
+                    </a>
+                    <a 
+                      v-else
+                      href="#" 
+                      class="text-red-600 hover:text-red-900 ml-4" 
+                      @click="deleteUser(user.id)"
+                    >
+                      Confirmar<span class="sr-only">, {{ user.name }}</span>
+                    </a>
                   </td>
                 </tr>
               </tbody>
@@ -71,7 +87,7 @@ import { useUser } from "./composables/useUser";
  const router = useRouter()
 const user = useUser()
 
-const { listUsers } = user
+const { listUsers,deleteUser, confirmDelete } = user
 
 const users = user.data
 

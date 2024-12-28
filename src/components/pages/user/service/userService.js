@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+/* eslint-disable */
 // Função para criar um novo usuário
 const urlBack = 'http://127.0.0.1:8000/api/'
 async function createUser(userData) {
@@ -36,20 +36,17 @@ async function updateUser(id, dadosAtualizados) {
     try {
         const resposta = await axios.put(`${urlBack}user/${id}`, dadosAtualizados);        
         return resposta.data;
-    } catch (erro) {
-        console.error(`Erro ao atualizar o usuário com ID ${id}:`, erro);
+    } catch (erro) {        
         throw erro;
     }
 }
 
 // Função para excluir um usuário
-async function excluirUsuario(id) {
+async function destroyUser(id) {
     try {
-        const resposta = await axios.delete(`${'/deleteUsers'}/${id}`);
-        console.log('Usuário excluído com sucesso:', resposta.data);
+        const resposta = await axios.delete(`${urlBack}user/${id}`);        
         return resposta.data;
-    } catch (erro) {
-        console.error(`Erro ao excluir o usuário com ID ${id}:`, erro);
+    } catch (erro) {        
         throw erro;
     }
 }
@@ -60,5 +57,5 @@ export {
     getUsers,
     getUserById,
     updateUser,
-    excluirUsuario
+    destroyUser
 };

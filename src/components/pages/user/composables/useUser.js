@@ -1,5 +1,5 @@
 import { ref } from "vue";
- import { createUser, getUserById, getUsers, updateUser } from "../service/userService";
+ import { createUser, destroyUser, getUserById, getUsers, updateUser } from "../service/userService";
 
 export const useUser = () => {
 
@@ -15,14 +15,15 @@ export const useUser = () => {
     
     const errorMensage = ref([''])
     const successMensage = ref('')
-      const addPhone = (isEditing) => {
-        if(isEditing){
+      const addPhone = (event, isEditing) => {        
+        if(isEditing){          
           data.value.phones.push({ phone_number: '' });
-        }else {
+        }else {          
           data.value.phones.push('');
         }
       };
-      
+    
+    const confirmDelete = ref(false)
      
       const removePhone = (index) => {
         data.value.phones.splice(index, 1);
@@ -52,8 +53,7 @@ export const useUser = () => {
       const handleSubmit = (isEditing) => {
          if(!isEditing){
           createOneUser()
-         }else {
-          console.log(id.value)
+         }else {          
           updateOneUser(id.value)
          }
         
@@ -74,7 +74,7 @@ export const useUser = () => {
               phone_number: phone.phone_number
             })),
           };
-        console.log(data.value)
+        
         })
       }
 
@@ -95,8 +95,7 @@ export const useUser = () => {
       }
       };
 
-    const updateOneUser = (id) => {
-      console.log(data.value)
+    const updateOneUser = (id) => {      
       data.value.phones = data.value.phones.map((phone) => ({
         id: phone.id, // Certifique-se de que o id está presente
         phone_number: phone.phone_number // Adicionando phone_number
@@ -113,8 +112,25 @@ export const useUser = () => {
             
           }
         })
+      
+
     }
+
+    const deleteUser = (id) => {
+      destroyUser(id).then(() => {
+        // Remove o usuário com o ID fornecido da lista
+        data.value = data.value.filter(user => user.id !== id);
+        confirmDelete.value = false
+        // Mensagem de sucesso
+        successMensage.value = 'Usuário deletado com sucesso!';
+        errorMensage.value = [''];
+      }).catch(error => {
+        // Mensagem de erro em caso de falha
+        errorMensage.value = ['Erro ao deletar o usuário: ', error.message];
+        successMensage.value = '';
+      });
     
+    }
       
 
     return {
@@ -126,6 +142,8 @@ export const useUser = () => {
         listUsers,
         getOneUser,
         updateOneUser,
+        deleteUser,
+        confirmDelete,
         errorMensage,
         successMensage,
         id
